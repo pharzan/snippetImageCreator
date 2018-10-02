@@ -3,20 +3,17 @@ from wand.drawing import Drawing
 from wand.color import Color
 from wand.compat import nested
 
-
+import subprocess
 code = """ 
-        const pluckDeep = key => obj => key.split('.').reduce((accum, key) => accum[key], obj)
-
-const compose = (...fns) => res => fns.reduce((accum, next) => next(accum), res)
-
-const unfold = (f, seed) => {
-  const go = (f, seed, acc) => {
-    const res = f(seed)
-    return res ? go(f, res[1], acc.concat([res[0]])) : acc
-  }
-  return go(f, seed, [])
-}
+const pluckDeep = key => obj => key.split('.').reduce((accum, key) => accum[key], obj)const compose = (...fns) => res => fns.reduce((accum, next) => next(accum), res)const unfold = (f, seed) => {const go = (f, seed, acc) => {const res = f(seed)return res ? go(f, res[1], acc.concat([res[0]])) : acc}return go(f, seed, [])}
 """
+
+with open("code.txt", "w") as text_file:
+    text_file.write("{0}".format(code))
+
+shell_cmd = """ vim -c "argdo setf javascript | execute 'normal! gg=G' | execute 'call JsBeautify()' | execute 'wq!' | update" code.txt """
+p = subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE)
+
 with Drawing() as ctx:
     with Drawing() as draw:
         draw.stroke_color = Color('black')
